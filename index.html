@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <title>Kuiz Bahasa Melayu</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #eef4ff;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 18px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.15);
+    }
+
+    h1 {
+      text-align: center;
+      color: #1e3a8a;
+    }
+
+    .info, .soalan {
+      margin: 20px 0;
+      padding: 15px;
+      background: #f8fafc;
+      border-radius: 12px;
+    }
+
+    input[type="text"] {
+      width: 95%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    label {
+      display: block;
+      margin: 8px 0;
+    }
+
+    button {
+      display: block;
+      margin: 25px auto;
+      background: #2563eb;
+      color: white;
+      border: none;
+      padding: 14px 35px;
+      font-size: 16px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #1d4ed8;
+    }
+
+    #keputusan {
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+      color: #15803d;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+  <h1>Kuiz Bahasa Melayu</h1>
+
+  <div class="info">
+    <input type="text" id="nama" placeholder="Nama murid">
+    <input type="text" id="kelas" placeholder="Kelas">
+  </div>
+
+  <div class="soalan">
+    <b>1. Pilih kata nama yang betul.</b>
+    <label><input type="radio" name="q1" value="A"> Berlari</label>
+    <label><input type="radio" name="q1" value="B"> Sekolah</label>
+    <label><input type="radio" name="q1" value="C"> Cantik</label>
+  </div>
+
+  <div class="soalan">
+    <b>2. Apakah lawan bagi perkataan “tinggi”?</b>
+    <label><input type="radio" name="q2" value="A"> Rendah</label>
+    <label><input type="radio" name="q2" value="B"> Besar</label>
+    <label><input type="radio" name="q2" value="C"> Panjang</label>
+  </div>
+
+  <div class="soalan">
+    <b>3. Ayat manakah yang betul?</b>
+    <label><input type="radio" name="q3" value="A"> Ali makan nasi.</label>
+    <label><input type="radio" name="q3" value="B"> Makan Ali nasi.</label>
+    <label><input type="radio" name="q3" value="C"> Nasi Ali makan.</label>
+  </div>
+
+  <div class="soalan">
+    <b>4. Pilih penjodoh bilangan yang sesuai: se_____ pensel.</b>
+    <label><input type="radio" name="q4" value="A"> ekor</label>
+    <label><input type="radio" name="q4" value="B"> batang</label>
+    <label><input type="radio" name="q4" value="C"> biji</label>
+  </div>
+
+  <div class="soalan">
+    <b>5. Maksud simpulan bahasa “ringan tulang” ialah?</b>
+    <label><input type="radio" name="q5" value="A"> Suka membantu</label>
+    <label><input type="radio" name="q5" value="B"> Cepat marah</label>
+    <label><input type="radio" name="q5" value="C"> Malas bekerja</label>
+  </div>
+
+  <button onclick="hantarJawapan()">Hantar Jawapan</button>
+
+  <div id="keputusan"></div>
+</div>
+
+<script>
+  const URL_APPS_SCRIPT = "PASTE_URL_APPS_SCRIPT_DI_SINI";
+
+  async function hantarJawapan() {
+    const nama = document.getElementById("nama").value;
+    const kelas = document.getElementById("kelas").value;
+
+    if (nama === "" || kelas === "") {
+      alert("Sila isi nama dan kelas.");
+      return;
+    }
+
+    const jawapanBetul = {
+      q1: "B",
+      q2: "A",
+      q3: "A",
+      q4: "B",
+      q5: "A"
+    };
+
+    let markah = 0;
+    let jawapanMurid = {};
+
+    for (let q in jawapanBetul) {
+      const pilihan = document.querySelector(`input[name="${q}"]:checked`);
+
+      if (!pilihan) {
+        alert("Sila jawab semua soalan.");
+        return;
+      }
+
+      jawapanMurid[q] = pilihan.value;
+
+      if (pilihan.value === jawapanBetul[q]) {
+        markah++;
+      }
+    }
+
+    const peratus = (markah / 5) * 100;
+
+    const data = {
+      nama: nama,
+      kelas: kelas,
+      markah: markah,
+      peratus: peratus,
+      q1: jawapanMurid.q1,
+      q2: jawapanMurid.q2,
+      q3: jawapanMurid.q3,
+      q4: jawapanMurid.q4,
+      q5: jawapanMurid.q5
+    };
+
+    try {
+      await fetch(URL_APPS_SCRIPT, {
+        method: "POST",
+        mode: "no-cors",
+        body: JSON.stringify(data)
+      });
+
+      document.getElementById("keputusan").innerHTML =
+        "Jawapan berjaya dihantar!<br>Markah: " + markah + "/5<br>Peratus: " + peratus + "%";
+
+    } catch (error) {
+      alert("Ralat berlaku. Sila cuba lagi.");
+    }
+  }
+</script>
+
+</body>
+</html>
